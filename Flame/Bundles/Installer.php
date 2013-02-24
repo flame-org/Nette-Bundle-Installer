@@ -20,7 +20,7 @@ class Installer extends \Composer\Installer\LibraryInstaller
 	{
 		parent::__construct($io, $composer, $type);
 
-		$this->appDir = realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '/../app');
+		$this->appDir = realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '../app');
 	}
 
 	/**
