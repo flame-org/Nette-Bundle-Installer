@@ -1,9 +1,9 @@
 {
-	"name": "nette/addon-installer",
+	"name": "flame/budle-installer",
 	"type": "composer-installer",
-	"description": "Custom installer for Nette Addons",
-	"keywords": ["nette", "installer"],
-	"homepage": "https://github.com/juzna/nette-addon-installer",
+	"description": "Custom installer for Nette Bundles",
+	"keywords": ["nette", "installer", "bundles"],
+	"homepage": "https://github.com/flame-org/nette-budle-installer",
 	"license": ["BSD-3", "GPLv2", "GPLv3"],
 	"authors": [
 		{
@@ -17,7 +17,7 @@
 	],
 	"require": {
 		"php": ">= 5.3.0",
-		"nette/nette": "2.0.*"
+		"nette/nette": ">=2.0.1"
 	},
 	"autoload": {
 		"psr-0": { "Nette\\Addons": "src/" }
