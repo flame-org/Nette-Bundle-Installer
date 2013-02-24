@@ -15,8 +15,7 @@ use Composer\Installer\LibraryInstaller;
 class Installer extends LibraryInstaller
 {
 	private static $supportedTypes = array(
-		'nette-addon',
-		'nette-assets',
+		'nette-bundle',
 	);
 
 	/** @var InstalledRepositoryInterface */
