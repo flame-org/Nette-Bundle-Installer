@@ -41,7 +41,7 @@ class Installer extends \Composer\Installer\LibraryInstaller
 	{
 		if($package->getType() == 'nette-bundle') {
 			$targetDir = $package->getTargetDir();
-			return $this->appDir . $this->getBundleName($package->getPrettyName()) . ($targetDir ? '/'.$targetDir : '');
+			return $this->appDir . '/' . $this->getBundleName($package->getPrettyName()) . ($targetDir ? '/'.$targetDir : '');
 		}else{
 			throw new \Exception("Not recognized package type '{$package->getType()}'");
 		}
