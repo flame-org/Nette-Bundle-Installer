@@ -5,13 +5,23 @@ namespace Flame\Bundles;
 /**
  * Custom installer of Nette Budles
  */
-class Installer extends LibraryInstaller
+class Installer extends \Composer\Installer\LibraryInstaller
 {
 
 	/** @var array */
 	private static $supportedTypes = array(
 		'nette-bundle',
 	);
+
+	/** @var string */
+	private $appDir;
+
+	public function __construct(\Composer\IO\IOInterface $io, \Composer\Composer $composer, $type = 'library')
+	{
+		parent::__construct($io, $composer, $type);
+
+		$this->appDir = realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '/../app');
+	}
 
 	/**
 	 * @param $packageType
@@ -30,9 +40,8 @@ class Installer extends LibraryInstaller
 	public function getInstallPath(\Composer\Package\PackageInterface $package)
 	{
 		if($package->getType() == 'nette-bundle') {
-			$vendorDir = realpath($this->vendorDir . '/../app');
 			$targetDir = $package->getTargetDir();
-			return ($vendorDir ? $vendorDir.'/' : '') . $this->getBundleName($package->getPrettyName()) . ($targetDir ? '/'.$targetDir : '');
+			return $this->appDir . $this->getBundleName($package->getPrettyName()) . ($targetDir ? '/'.$targetDir : '');
 		}else{
 			throw new \Exception("Not recognized package type '{$package->getType()}'");
 		}
