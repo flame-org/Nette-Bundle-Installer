@@ -1,9 +1,9 @@
 {
-	"name": "flame/budle-installer",
+	"name": "flame/bundle-installer",
 	"type": "composer-installer",
 	"description": "Custom installer for Nette Bundles",
 	"keywords": ["nette", "installer", "bundles"],
-	"homepage": "https://github.com/flame-org/nette-budle-installer",
+	"homepage": "https://github.com/flame-org/nette-bundle-installer",
 	"license": ["BSD-3", "GPLv2", "GPLv3"],
 	"authors": [
 		{
