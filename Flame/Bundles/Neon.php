@@ -10,7 +10,7 @@
  * @package Nette
  */
 
-namespace Nette\Addons;
+namespace Flame\Bundles;
 
 /**
  * FIXME: remove this and require it as a dependancy
