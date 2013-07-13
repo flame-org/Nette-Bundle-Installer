@@ -22,7 +22,6 @@
 		"class": "Flame\\Bundles\\Installer"
 	},
 	"require-dev": {
-		"composer/composer": "1.0.*"
-	},
-	"minimum-stability": "dev"
+		"composer/composer": "dev-master"
+	}
 }
