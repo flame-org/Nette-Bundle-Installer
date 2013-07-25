@@ -86,7 +86,7 @@ class Installer extends LibraryInstaller
 					$config['modules'] = array();
 				}
 				$config['modules'][] = $class;
-				$fileContent = '<?php ' . PHP_EOL . 'return ' . Helpers::dump($config) . ';';
+				$fileContent = '<?php ' . PHP_EOL . PHP_EOL . 'return ' . Helpers::dump($config) . ';';
 				file_put_contents($extensionsFile, $fileContent);
 			}
 		}
