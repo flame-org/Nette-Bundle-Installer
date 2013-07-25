@@ -5,7 +5,7 @@
  * @author: Jiří Šifalda <sifalda.jiri@gmail.com>
  * @date: 25.07.13
  */
-namespace Nette\Utils\PhpGenerator;
+namespace Flame\Utils\PhpGenerator;
 
 use Nette;
 
@@ -31,10 +31,7 @@ class Helpers
 
 	private static function _dump(& $var, $level = 0)
 	{
-		if ($var instanceof PhpLiteral) {
-			return $var->value;
-
-		} elseif (is_float($var)) {
+		if (is_float($var)) {
 			$var = var_export($var, TRUE);
 			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
 
@@ -166,7 +163,7 @@ class Helpers
 	 */
 	public static function formatMember($name)
 	{
-		return $name instanceof PhpLiteral || !self::isIdentifier($name)
+		return !self::isIdentifier($name)
 			? '{' . self::_dump($name) . '}'
 			: $name ;
 	}

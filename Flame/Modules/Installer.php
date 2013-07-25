@@ -7,7 +7,7 @@ use Composer\Installer\LibraryInstaller;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface;
-use Nette\Utils\PhpGenerator\Helpers;
+use Flame\Utils\PhpGenerator\Helpers;
 
 /**
  * Custom installer of Nette Modules
