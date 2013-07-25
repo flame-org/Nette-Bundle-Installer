@@ -82,7 +82,10 @@ class Installer extends LibraryInstaller
 			$class = $extra['class'];
 			if(file_exists($extensionsFile = $this->appDir . $this->defaultConfigs[0])) {
 				$config = include_once $extensionsFile;
-				$config[] = $class;
+				if(!isset($config['modules'])) {
+					$config['modules'] = array();
+				}
+				$config['modules'][] = $class;
 				$fileContent = '<?php ' . PHP_EOL . 'return ' . Helpers::dump($config) . ';';
 				file_put_contents($extensionsFile, $fileContent);
 			}
