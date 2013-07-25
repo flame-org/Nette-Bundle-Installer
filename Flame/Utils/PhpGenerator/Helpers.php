@@ -7,8 +7,6 @@
  */
 namespace Flame\Utils\PhpGenerator;
 
-use Nette;
-
 /**
  * PHP code generator utils.
  *
@@ -20,15 +18,20 @@ class Helpers
 
 
 	/**
-	 * Returns a PHP representation of a variable.
-	 * @return string
+	 * @param $var
+	 * @return mixed|string
 	 */
 	public static function dump($var)
 	{
 		return self::_dump($var);
 	}
 
-
+	/**
+	 * @param $var
+	 * @param int $level
+	 * @return mixed|string
+	 * @throws \Exception
+	 */
 	private static function _dump(& $var, $level = 0)
 	{
 		if (is_float($var)) {
@@ -66,7 +69,7 @@ class Helpers
 			if (empty($var)) {
 
 			} elseif ($level > 50 || isset($var[$marker])) {
-				throw new Nette\InvalidArgumentException('Nesting level too deep or recursive dependency.');
+				throw new \Exception('Nesting level too deep or recursive dependency.');
 
 			} else {
 				$s .= "\n";
@@ -92,7 +95,7 @@ class Helpers
 			if (empty($arr)) {
 
 			} elseif ($level > 50 || in_array($var, $list, TRUE)) {
-				throw new Nette\InvalidArgumentException('Nesting level too deep or recursive dependency.');
+				throw new \Exception('Nesting level too deep or recursive dependency.');
 
 			} else {
 				$s .= "\n";
@@ -117,8 +120,8 @@ class Helpers
 
 
 	/**
-	 * Generates PHP statement.
-	 * @return string
+	 * @param $statement
+	 * @return mixed
 	 */
 	public static function format($statement)
 	{
@@ -128,20 +131,22 @@ class Helpers
 
 
 	/**
-	 * Generates PHP statement.
-	 * @return string
+	 * @param $statement
+	 * @param array $args
+	 * @return mixed
+	 * @throws \Exception
 	 */
 	public static function formatArgs($statement, array $args)
 	{
 		$a = strpos($statement, '?');
 		while ($a !== FALSE) {
 			if (!$args) {
-				throw new Nette\InvalidArgumentException('Insufficient number of arguments.');
+				throw new \Exception('Insufficient number of arguments.');
 			}
 			$arg = array_shift($args);
 			if (substr($statement, $a + 1, 1) === '*') { // ?*
 				if (!is_array($arg)) {
-					throw new Nette\InvalidArgumentException('Argument must be an array.');
+					throw new \Exception('Argument must be an array.');
 				}
 				$arg = implode(', ', array_map(array(__CLASS__, 'dump'), $arg));
 				$statement = substr_replace($statement, $arg, $a, 2);
@@ -158,7 +163,7 @@ class Helpers
 
 
 	/**
-	 * Returns a PHP representation of a object member.
+	 * @param $name
 	 * @return string
 	 */
 	public static function formatMember($name)
@@ -170,6 +175,7 @@ class Helpers
 
 
 	/**
+	 * @param $value
 	 * @return bool
 	 */
 	public static function isIdentifier($value)
@@ -178,6 +184,11 @@ class Helpers
 	}
 
 
+	/**
+	 * @param $class
+	 * @param array $props
+	 * @return mixed
+	 */
 	public static function createObject($class, array $props)
 	{
 		return unserialize('O' . substr(serialize((string) $class), 1, -1) . substr(serialize($props), 1));
