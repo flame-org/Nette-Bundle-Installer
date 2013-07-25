@@ -16,12 +16,11 @@
 	},
 	"autoload": {
 		"psr-0": {
-      "Flame": "",
-      "Nette": "libs/"
+      "Flame": ""
     }
 	},
 	"extra": {
-		"class": "Flame\\Bundles\\Installer"
+		"class": "Flame\\Modules\\Installer"
 	},
 	"require-dev": {
 		"composer/composer": "dev-master"

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flame\Bundles;
+namespace Flame\Modules;
 
 use Composer\Composer;
 use Composer\Installer\LibraryInstaller;
