@@ -7,7 +7,8 @@ use Composer\Installer\LibraryInstaller;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface;
-use Flame\Utils\PhpGenerator\Helpers;
+use Flame\Utils\Reader;
+use Flame\Utils\Writer;
 
 /**
  * Custom installer of Nette Modules
@@ -49,10 +50,110 @@ class Installer extends LibraryInstaller
 		return in_array($packageType, $this->supportedTypes);
 	}
 
+	/**
+	 * @param InstalledRepositoryInterface $repo
+	 * @param PackageInterface $package
+	 */
 	public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
 	{
-		$this->includeExtensionClass($package);
+		$this->extensionManager($package);
 		parent::install($repo, $package);
+	}
+
+	/**
+	 * @param InstalledRepositoryInterface $repo
+	 * @param PackageInterface $package
+	 */
+	public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package)
+	{
+		$this->extensionManager($package, false);
+		parent::uninstall($repo, $package);
+	}
+
+	/**
+	 * @param PackageInterface $package
+	 * @param bool $addFlag
+	 */
+	private function extensionManager(PackageInterface $package, $addFlag = true)
+	{
+		$extra = $this->getExtra($package);
+		$class = (isset($extra['class'])) ? $extra['class'] : null;
+
+		if($class !== null) {
+			$name = (isset($extra['name'])) ? $extra['name'] : null;
+
+			if(file_exists($phpFile = $this->appDir . $this->defaultConfigs[0])) {
+
+				$config = Reader::parsePhp($phpFile);
+				if($addFlag === true) {
+					$config = $this->addExtension($config, $class, $name);
+				}else{
+					$config = $this->removeExtension($config, $class, $name);
+				}
+
+				Writer::dumpPhp($phpFile, $config);
+
+			}elseif(file_exists($neonFile = $this->appDir . $this->defaultConfigs[1])) {
+
+				$config = Reader::parseNeon($neonFile);
+
+				if($addFlag === true) {
+					$config = $this->addExtension($config, $class, $name);
+				}else{
+					$config = $this->removeExtension($config, $class, $name);
+				}
+
+				Writer::dumpNeon($neonFile, $config);
+			}
+		}
+	}
+
+	/**
+	 * @param $config
+	 * @param $class
+	 * @param $name
+	 * @return mixed
+	 */
+	private function addExtension($config, $class, $name)
+	{
+		if(!isset($config['modules'])) {
+			$config['modules'] = array();
+		}
+
+		if($name !== null) {
+			if(!isset($config['modules'][$name])) {
+				$config['modules'][$name] = $class;
+			}
+		}else{
+			if(!in_array($class, $config['modules'])) {
+				$config['modules'][] = $class;
+			}
+		}
+
+		return $config;
+	}
+
+	/**
+	 * @param $config
+	 * @param $class
+	 * @param $name
+	 * @return mixed
+	 */
+	private function removeExtension($config, $class, $name)
+	{
+		if(isset($config['modules'])) {
+			if($name !== null) {
+				if(isset($config['modules'][$name])) {
+					unset($config['modules'][$name]);
+				}
+			}else{
+				if($key = array_search($class, $config['modules'])) {
+					unset($config['modules'][$key]);
+				}
+			}
+		}
+
+		return $config;
 	}
 
 	/**
@@ -70,26 +171,6 @@ class Installer extends LibraryInstaller
 		}
 
 		return $path;
-	}
-
-	/**
-	 * @param PackageInterface $package
-	 */
-	private function includeExtensionClass(PackageInterface $package)
-	{
-		$extra = $this->getExtra($package);
-		if(isset($extra['class'])) {
-			$class = $extra['class'];
-			if(file_exists($extensionsFile = $this->appDir . $this->defaultConfigs[0])) {
-				$config = include_once $extensionsFile;
-				if(!isset($config['modules'])) {
-					$config['modules'] = array();
-				}
-				$config['modules'][] = $class;
-				$fileContent = '<?php ' . PHP_EOL . PHP_EOL . 'return ' . Helpers::dump($config) . ';';
-				file_put_contents($extensionsFile, $fileContent);
-			}
-		}
 	}
 
 	/**
