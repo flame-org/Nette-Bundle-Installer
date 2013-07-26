@@ -1,12 +1,26 @@
-# Nette Bundle Installer
+# Nette Module Installer
 
 This is a [custom installer](http://getcomposer.org/doc/articles/custom-installers.md) for Composer packaging system which
-helps installing Nette Bundles.
+helps installing Nette Modules.
 
-## Creating an Bundle
-Please read Composer's manual on [custom installers](http://getcomposer.org/doc/articles/custom-installers.md) for an introduction.
+## Creating an Module
+To create a new **Nette Module**, simply create it as a *Composer package*. There are only a few differences from normal Composer packages:
 
-To create a new **Nette Bundle**, simply create it as a *Composer package*. There are only 2 differences from normal Composer packages:
+1. Set *type* to `nette-module`
+2. Add this installer as a requirement: `flame/module-installer: @dev`
+3. Set **extra** section of composer.json
 
-1. Set *type* to `nette-bundle`
-2. Add this installer as a requirement: `flame/bundle-installer`
+Here is an example:
+```json
+"extra": {
+    "module": {
+      "class": "Flame\\CMS\\ErrorModule\\DI\\ErrorExtension"
+      "name": "Error"
+    }
+  }
+```
+**Name** is optional
+
+Your extension will be added into app/config/extensions.(php|neon) file
+
+*Please create first the file with php or neon extension*
