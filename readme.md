@@ -12,12 +12,14 @@ To create a new **Nette Module**, simply create it as a *Composer package*. Ther
 
 Here is an example:
 ```json
-"extra": {
-    "module": {
-      "class": "Flame\\CMS\\ErrorModule\\DI\\ErrorExtension",
-      "name": "Error"
-    }
-  }
+{
+	"extra": {
+		"module": {
+			"class": "Flame\\CMS\\ErrorModule\\DI\\ErrorExtension",
+			"name": "Error"
+		}
+	}
+}
 ```
 **Name** is optional
 
