@@ -7,8 +7,8 @@ use Composer\Installer\LibraryInstaller;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface;
-use Flame\Utils\Reader;
-use Flame\Utils\Writer;
+use Flame\Modules\Extensions\NeonExtension;
+use Flame\Modules\Extensions\PhpExtension;
 
 /**
  * Custom installer of Nette Modules
@@ -19,15 +19,7 @@ class Installer extends LibraryInstaller
 	private $appDir;
 
 	/** @var array */
-	private $supportedTypes = array(
-		'nette-module',
-	);
-
-	/** @var array  */
-	private $defaultConfigs = array(
-		'/config/extensions.php',
-		'/config/extensions.neon',
-	);
+	private $supportedTypes = array('nette-module');
 
 	/**
 	 * @param IOInterface $io
@@ -56,7 +48,7 @@ class Installer extends LibraryInstaller
 	 */
 	public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
 	{
-		$this->extensionManager($package);
+		$this->installExtension($package);
 		parent::install($repo, $package);
 	}
 
@@ -66,94 +58,45 @@ class Installer extends LibraryInstaller
 	 */
 	public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package)
 	{
-		$this->extensionManager($package, false);
+		$this->uninstallExtension($package);
 		parent::uninstall($repo, $package);
 	}
 
 	/**
 	 * @param PackageInterface $package
-	 * @param bool $addFlag
 	 */
-	private function extensionManager(PackageInterface $package, $addFlag = true)
+	private function installExtension(PackageInterface $package)
 	{
 		$extra = $this->getExtra($package);
-		$class = (isset($extra['class'])) ? $extra['class'] : null;
 
-		if($class !== null) {
+		if(isset($extra['class'])) {
 			$name = (isset($extra['name'])) ? $extra['name'] : null;
 
-			if(file_exists($phpFile = $this->appDir . $this->defaultConfigs[0])) {
+			$phpExtension = new PhpExtension($this->appDir, $extra['class'], $name);
+			$phpExtension->install();
 
-				$config = Reader::parsePhp($phpFile);
-				if($addFlag === true) {
-					$config = $this->addExtension($config, $class, $name);
-				}else{
-					$config = $this->removeExtension($config, $class, $name);
-				}
-
-				Writer::dumpPhp($phpFile, $config);
-
-			}elseif(file_exists($neonFile = $this->appDir . $this->defaultConfigs[1])) {
-
-				$config = Reader::parseNeon($neonFile);
-
-				if($addFlag === true) {
-					$config = $this->addExtension($config, $class, $name);
-				}else{
-					$config = $this->removeExtension($config, $class, $name);
-				}
-
-				Writer::dumpNeon($neonFile, $config);
-			}
+			$neonExtension = new NeonExtension($this->appDir, $extra['class'], $name);
+			$neonExtension->install();
 		}
 	}
 
 	/**
-	 * @param $config
-	 * @param $class
-	 * @param $name
-	 * @return mixed
+	 * @param PackageInterface $package
+	 * @return bool
 	 */
-	private function addExtension($config, $class, $name)
+	private function uninstallExtension(PackageInterface $package)
 	{
-		if(!isset($config['modules'])) {
-			$config['modules'] = array();
+		$extra = $this->getExtra($package);
+
+		if(isset($extra['class'])) {
+			$name = (isset($extra['name'])) ? $extra['name'] : null;
+
+			$phpExtension = new PhpExtension($this->appDir, $extra['class'], $name);
+			$phpExtension->uninstall();
+
+			$neonExtension = new NeonExtension($this->appDir, $extra['class'], $name);
+			$neonExtension->uninstall();
 		}
-
-		if($name !== null) {
-			if(!isset($config['modules'][$name])) {
-				$config['modules'][$name] = $class;
-			}
-		}else{
-			if(!in_array($class, $config['modules'])) {
-				$config['modules'][] = $class;
-			}
-		}
-
-		return $config;
-	}
-
-	/**
-	 * @param $config
-	 * @param $class
-	 * @param $name
-	 * @return mixed
-	 */
-	private function removeExtension($config, $class, $name)
-	{
-		if(isset($config['modules'])) {
-			if($name !== null) {
-				if(isset($config['modules'][$name])) {
-					unset($config['modules'][$name]);
-				}
-			}else{
-				if($key = array_search($class, $config['modules'])) {
-					unset($config['modules'][$key]);
-				}
-			}
-		}
-
-		return $config;
 	}
 
 	/**
