@@ -14,12 +14,14 @@ Here is an example:
 ```json
 "extra": {
     "module": {
-      "class": "Flame\\CMS\\ErrorModule\\DI\\ErrorExtension"
+      "class": "Flame\\CMS\\ErrorModule\\DI\\ErrorExtension",
       "name": "Error"
     }
   }
 ```
 **Name** is optional
+
+Look at this [composer.json](https://github.com/flame-cms/Angular-Module/blob/master/composer.json) for full example.
 
 Your extension will be added into app/config/extensions.(php|neon) file
 
