@@ -22,7 +22,7 @@ abstract class BaseInstaller implements IInstaller
 			$config['modules'] = array();
 		}
 
-		if($name !== null) {
+		if($name) {
 			if(!isset($config['modules'][$name])) {
 				$config['modules'][$name] = $class;
 			}
@@ -44,7 +44,7 @@ abstract class BaseInstaller implements IInstaller
 	protected function removeExtension($config, $class, $name)
 	{
 		if(isset($config['modules'])) {
-			if($name !== null) {
+			if($name) {
 				if(isset($config['modules'][$name])) {
 					unset($config['modules'][$name]);
 				}
