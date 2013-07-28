@@ -9,6 +9,7 @@ use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface;
 use Flame\Modules\Extensions\NeonExtension;
 use Flame\Modules\Extensions\PhpExtension;
+use Flame\Modules\Parsers\PhpParser;
 
 /**
  * Custom installer of Nette Modules
@@ -72,11 +73,19 @@ class Installer extends LibraryInstaller
 		if(isset($extra['class'])) {
 			$name = (isset($extra['name'])) ? $extra['name'] : null;
 
-			$phpExtension = new PhpExtension($this->appDir, $extra['class'], $name);
-			$phpExtension->install();
-
 			$neonExtension = new NeonExtension($this->appDir, $extra['class'], $name);
-			$neonExtension->install();
+			if($neonExtension->existConfigFile()){
+				$neonExtension->install();
+				return;
+			}
+
+			$phpExtension = new PhpExtension($this->appDir, $extra['class'], $name);
+			if(!$phpExtension->existConfigFile()) {
+				$parser = new PhpParser();
+				$parser->write($phpExtension->getConfigFile(), array());
+			}
+
+			$phpExtension->install();
 		}
 	}
 
@@ -91,11 +100,17 @@ class Installer extends LibraryInstaller
 		if(isset($extra['class'])) {
 			$name = (isset($extra['name'])) ? $extra['name'] : null;
 
-			$phpExtension = new PhpExtension($this->appDir, $extra['class'], $name);
-			$phpExtension->uninstall();
-
 			$neonExtension = new NeonExtension($this->appDir, $extra['class'], $name);
-			$neonExtension->uninstall();
+			if($neonExtension->existConfigFile()) {
+				$neonExtension->uninstall();
+				return;
+			}
+
+			$phpExtension = new PhpExtension($this->appDir, $extra['class'], $name);
+			if($phpExtension->existConfigFile()) {
+				$phpExtension->uninstall();
+				return;
+			}
 		}
 	}
 

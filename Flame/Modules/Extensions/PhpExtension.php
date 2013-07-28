@@ -9,7 +9,7 @@ namespace Flame\Modules\Extensions;
 
 use Flame\Modules\Installers\PhpInstaller;
 
-class PhpExtension implements IExtension
+class PhpExtension extends BaseExtension
 {
 
 	/** @var  string */
@@ -67,11 +67,7 @@ class PhpExtension implements IExtension
 	 */
 	public function install()
 	{
-		if(file_exists($this->getConfigFile())) {
-			return $this->installer->install($this);
-		}
-
-		return false;
+		return $this->installer->install($this);
 	}
 
 	/**
@@ -79,10 +75,6 @@ class PhpExtension implements IExtension
 	 */
 	public function uninstall()
 	{
-		if(file_exists($this->getConfigFile())) {
-			return $this->installer->uninstall($this);
-		}
-
-		return false;
+		return $this->installer->uninstall($this);
 	}
 }
