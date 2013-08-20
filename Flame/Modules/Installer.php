@@ -115,20 +115,14 @@ class Installer extends LibraryInstaller
 	}
 
 	/**
-	 * @return string
-	 * @throws \Exception
+	 * @return string|null
 	 */
 	private function getAppDirPath()
 	{
 		$path = realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '../app');
 		if(!file_exists($path)) {
-			$path = realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '../../app');
-			if(!file_exists($path)) {
-				throw new \Exception('We could not found "app" directory');
-			}
+			return realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '../../app');
 		}
-
-		return $path;
 	}
 
 	/**
