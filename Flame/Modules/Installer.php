@@ -49,7 +49,10 @@ class Installer extends LibraryInstaller
 	 */
 	public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
 	{
-		$this->installExtension($package);
+		if($this->appDir) {
+			$this->installExtension($package);
+		}
+
 		parent::install($repo, $package);
 	}
 
@@ -59,7 +62,10 @@ class Installer extends LibraryInstaller
 	 */
 	public function uninstall(InstalledRepositoryInterface $repo, PackageInterface $package)
 	{
-		$this->uninstallExtension($package);
+		if($this->appDir) {
+			$this->uninstallExtension($package);
+		}
+
 		parent::uninstall($repo, $package);
 	}
 
@@ -121,7 +127,10 @@ class Installer extends LibraryInstaller
 	{
 		$path = realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '../app');
 		if(!file_exists($path)) {
-			return realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '../../app');
+			$path = realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '../../app');
+			if(file_exists($path)) {
+				return $path;
+			}
 		}
 	}
 
