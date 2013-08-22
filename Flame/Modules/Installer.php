@@ -128,10 +128,12 @@ class Installer extends LibraryInstaller
 		$path = realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '../app');
 		if(!file_exists($path)) {
 			$path = realpath(($this->vendorDir ? $this->vendorDir.'/' : '') . '../../app');
-			if(file_exists($path)) {
-				return $path;
+			if(!file_exists($path)) {
+				$path = null;
 			}
 		}
+
+		return $path;
 	}
 
 	/**
